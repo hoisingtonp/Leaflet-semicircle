@@ -40,7 +40,8 @@
     var semicircle = {
         options: {
             startAngle: 0,
-            stopAngle: 359.9999
+            stopAngle: 359.9999,
+            calcArcPoint: null
         },
 
         startAngle: function () {
@@ -79,6 +80,9 @@
         },
         getDirection: function () {
             return this.stopAngle() - (this.stopAngle() - this.startAngle()) / 2;
+        },
+        setCalcArcPoint: function(calcArcPoint) {
+            this.options.calcArcPoint = calcArcPoint;
         },
 
         isSemicircle: function () {
@@ -143,8 +147,8 @@
             var p = layer._map.latLngToLayerPoint(layer._latlng),
                 r = layer._radius,
                 r2 = Math.round(layer._radiusY || r),
-                start = p.rotated(layer.startAngle(), r),
-                end = p.rotated(layer.stopAngle(), r);
+                start = layer.options.calcArcPoint ? layer.options.calcArcPoint({layer: layer, angle: layer.options.startAngle}) : p.rotated(layer.startAngle(), r),
+                end = layer.options.calcArcPoint ? layer.options.calcArcPoint({layer: layer, angle: layer.options.stopAngle}) : p.rotated(layer.stopAngle(), r);
 
             var largeArc = (layer.options.stopAngle - layer.options.startAngle >= 180) ? '1' : '0';
 
